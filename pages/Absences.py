@@ -38,7 +38,7 @@ single_absence_chart = plot_absences(classdata, absences_splitby_input,
                                      250)
 
 with left_one:
-    st.altair_chart(all_absences_chart)
+    st.altair_chart(all_absences_chart, use_container_width=True)
 
 with right_one:
-    st.altair_chart(single_absence_chart)
+    st.altair_chart(single_absence_chart, use_container_width=True)
