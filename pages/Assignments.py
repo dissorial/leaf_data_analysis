@@ -3,7 +3,7 @@ from utils.data_f import get_data, get_classdata
 from utils.assignments_f import plot_assignments_stacked, plot_assignments_default, plot_altair_line_chart_assignments, get_assignments_data_all
 
 st.set_page_config(layout="wide")
-df = get_data('data/data.csv')
+df = get_data()
 
 classList = df['Class'].unique().tolist()
 with st.sidebar:

@@ -1,20 +1,15 @@
 import streamlit as st
-import pandas as pd
-import numpy as np
-import seaborn as sns
-import matplotlib.pyplot as plt
-import altair as alt
-import joypy
-from matplotlib import cm
 from utils.data_f import get_classdata, get_data
 from utils.classMeta_f import scatter_chart, violin_plot, ridgeline_plot, plot_all_absences, plot_all_assignments, plot_all_trafficlight, plot_grades_classes, plot_single_trafficlight
 from utils.traffic_f import get_traffic_data_all
 from utils.assignments_f import get_assignments_data_all
 
+
 st.set_page_config(layout="wide")
 
 #data
-csv_data = get_data('data/data.csv')
+
+csv_data = get_data()
 
 traffic_data = get_traffic_data_all(
     csv_data, ['Class', 'Term', 'Hall', 'Program', 'Year'])

@@ -3,7 +3,7 @@ from utils.data_f import get_data, get_classdata
 from utils.traffic_f import plot_single_traffic, plot_trafficLights, plot_altair_line_chart_traffic, get_traffic_data_all
 
 st.set_page_config(layout="wide")
-df = get_data('data/data.csv')
+df = get_data()
 
 classList = df['Class'].unique().tolist()
 

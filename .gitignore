@@ -3,8 +3,6 @@
 !.streamlit/config.toml
 !*/frontend/.env
 
-#data
-data/
 
 # Visual Studio Code
 .vscode/*

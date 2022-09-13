@@ -4,7 +4,8 @@ from utils.absences_f import plot_absences
 
 st.set_page_config(layout="wide")
 
-df = get_data('data/data.csv')
+# df = get_data('data/data.csv')
+df = get_data()
 
 classList = df['Class'].unique().tolist()
 with st.sidebar:

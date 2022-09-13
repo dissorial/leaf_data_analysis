@@ -4,7 +4,7 @@ from utils.grades_f import plot_altair_line_chart, plot_altair_histogram, plot_c
 
 st.set_page_config(layout="wide")
 
-df = get_data('data/data.csv')
+df = get_data()
 classList = df['Class'].unique().tolist()
 
 with st.sidebar:
