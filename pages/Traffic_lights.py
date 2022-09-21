@@ -143,9 +143,11 @@ with tab2:
     # classdata_wide = df_wide[df_wide['Class'] == chosen_class]
 
     with col2_right:
-        traffic_split_input = st.selectbox(
-            label='Split by',
-            options=['Program', 'Year', 'Hall', 'Student leadership'])
+        traffic_split_input = st.selectbox(label='Split by',
+                                           options=[
+                                               'Program', 'Year', 'Hall',
+                                               'Student leadership', 'Advisors'
+                                           ])
 
     single_traffic_chart = plot_trafficLights_stacked(classdata_long,
                                                       traffic_split_input)

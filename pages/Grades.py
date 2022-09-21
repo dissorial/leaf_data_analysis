@@ -151,7 +151,7 @@ with tab2:
                 label='Split by',
                 options=[
                     'Class', 'Hall', 'Term', 'Program', 'Year',
-                    'Student leadership'
+                    'Student leadership', 'Advisors'
                 ],
                 key='grades_drilldown_single',
                 index=2)
