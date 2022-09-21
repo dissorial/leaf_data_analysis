@@ -13,7 +13,9 @@ grades_query_img = Image.open('images/grades_query.png')
 traffic_query_img = Image.open('images/traffic_query.png')
 
 st.title('LEAF Academy: Veracross Data Analysis')
-
+st.info(
+    'Open the menu in the upper right corner and make sure that "Wide mode" is checked". Feel free to also change the theme color. Light mode is recommended, but dark mode should work fine too.'
+)
 st.markdown('## 1.0 Data exports from Veracross')
 
 st.markdown(
