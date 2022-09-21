@@ -4,7 +4,9 @@ import numpy as np
 from utils.assignments_helper import plot_weekly_assignments_count, plot_monthly_assignments_count, plot_monthly_assignment_duration, plot_weekly_assignments_duration, plot_all_assignments_stacked, assignments_meta
 from utils.data_load import get_filtered_assignment_classdata, decrypt_data
 
-st.set_page_config(layout="wide", page_title='Assignments', initial_sidebar_state='expanded')
+st.set_page_config(layout="wide",
+                   page_title='Assignments',
+                   initial_sidebar_state='expanded')
 
 # assignments_data_status = decrypt_data(
 #     'data/assignments/assignments_status01_enc.csv')
@@ -40,7 +42,8 @@ with tab1:
         assign_drilldown = st.selectbox(label='Show assignments by',
                                         options=[
                                             'Class', 'Hall', 'Term', 'Program',
-                                            'Year', 'Student leadership'
+                                            'Year', 'Student leadership',
+                                            'Advisors'
                                         ],
                                         key='assign_drilldown')
 

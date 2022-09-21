@@ -32,7 +32,8 @@ with tab1:
         grades_drilldown = st.selectbox(label='Group by',
                                         options=[
                                             'Class', 'Hall', 'Term', 'Program',
-                                            'Year', 'Student leadership'
+                                            'Year', 'Student leadership',
+                                            'Advisors'
                                         ],
                                         key='grades_drilldown')
 
@@ -150,7 +151,7 @@ with tab2:
                 label='Split by',
                 options=[
                     'Class', 'Hall', 'Term', 'Program', 'Year',
-                    'Student leadership'
+                    'Student leadership', 'Advisors'
                 ],
                 key='grades_drilldown_single',
                 index=2)

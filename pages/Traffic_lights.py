@@ -23,7 +23,7 @@ with tab1:
     with left_col:
         traffic_drilldown = st.selectbox(
             label='Group traffic lights by',
-            options=['Class', 'Hall', 'Term', 'Program', 'Year'],
+            options=['Class', 'Hall', 'Term', 'Program', 'Year', 'Advisors'],
             key='traffic_drilldown')
 
     with middle_col:
@@ -143,9 +143,11 @@ with tab2:
     # classdata_wide = df_wide[df_wide['Class'] == chosen_class]
 
     with col2_right:
-        traffic_split_input = st.selectbox(
-            label='Split by',
-            options=['Program', 'Year', 'Hall', 'Student leadership'])
+        traffic_split_input = st.selectbox(label='Split by',
+                                           options=[
+                                               'Program', 'Year', 'Hall',
+                                               'Student leadership', 'Advisors'
+                                           ])
 
     single_traffic_chart = plot_trafficLights_stacked(classdata_long,
                                                       traffic_split_input)

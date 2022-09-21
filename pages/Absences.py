@@ -26,7 +26,7 @@ with tab1:
                                           options=[
                                               'Class', 'Hall', 'Term',
                                               'Program', 'Year',
-                                              'Student leadership'
+                                              'Student leadership', 'Advisors'
                                           ],
                                           key='absences_drilldown')
 
@@ -152,10 +152,13 @@ with tab2:
                                            key='filter_abs_status_single')
 
     with second_row_right:
-        absence_split_input = st.selectbox(
-            label='Split by',
-            options=['Program', 'Class', 'Year', 'Hall', 'Student leadership'],
-            key='absence_split_input')
+        absence_split_input = st.selectbox(label='Split by',
+                                           options=[
+                                               'Program', 'Class', 'Year',
+                                               'Hall', 'Student leadership',
+                                               'Advisors'
+                                           ],
+                                           key='absence_split_input')
 
     if (len(filter_abs_years) == 0 or len(filter_abs_terms) == 0
             or len(filter_abs_status) == 0):
