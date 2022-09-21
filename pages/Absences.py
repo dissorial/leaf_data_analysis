@@ -26,7 +26,7 @@ with tab1:
                                           options=[
                                               'Class', 'Hall', 'Term',
                                               'Program', 'Year',
-                                              'Student leadership'
+                                              'Student leadership', 'Advisors'
                                           ],
                                           key='absences_drilldown')
 

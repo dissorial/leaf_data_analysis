@@ -23,7 +23,7 @@ with tab1:
     with left_col:
         traffic_drilldown = st.selectbox(
             label='Group traffic lights by',
-            options=['Class', 'Hall', 'Term', 'Program', 'Year'],
+            options=['Class', 'Hall', 'Term', 'Program', 'Year', 'Advisors'],
             key='traffic_drilldown')
 
     with middle_col:
