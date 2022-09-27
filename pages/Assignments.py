@@ -120,7 +120,7 @@ with tab1:
         assign_drilldown))
     with st.expander('Expand/collapse', expanded=True):
         assign_aggfunction = st.selectbox(label='Aggregate function',
-                                          options=['mean', 'median', 'sum'],
+                                          options=['mean', 'median'],
                                           key='assign_aggfunction')
 
         # Fig 4

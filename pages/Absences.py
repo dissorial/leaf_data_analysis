@@ -193,7 +193,7 @@ with tab2:
     with third_row_left:
         absences_aggfunction_single = st.selectbox(
             label='Aggregate function',
-            options=['mean', 'median', 'sum'],
+            options=['mean', 'median'],
             key='absences_aggfunction_single')
 
     with third_row_right:
