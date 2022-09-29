@@ -1,33 +1,40 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-from utils.assignments_helper import plot_weekly_assignments_count, plot_monthly_assignments_count, plot_monthly_assignment_duration, plot_weekly_assignments_duration, plot_all_assignments_stacked, assignments_meta
+from utils.assignments_helper import plot_weekly_assignments_count, plot_monthly_assignments_count, plot_monthly_assignment_duration, plot_weekly_assignments_duration, plot_all_assignments_stacked, assignments_meta, preprocess_data
 from utils.data_load import get_filtered_assignment_classdata, decrypt_data
 
 st.set_page_config(layout="wide",
                    page_title='Assignments',
                    initial_sidebar_state='expanded')
 
-# assignments_data_status = decrypt_data(
-#     'data/assignments/assignments_status01_enc.csv')
+initial_21_22 = decrypt_data('data/assignments/assignments_datetime01_enc.csv')
+initial_22_23 = decrypt_data(
+    'data/assignments/assignments_datetime_2023_enc.csv')
+# initial_22_23 = pd.read_csv('data/assignments/assignments_datetime_2023.csv')
 
-assignments_data_datetime = decrypt_data(
-    'data/assignments/assignments_datetime01_enc.csv')
+# assignments_data_datetime = preprocess_data(initial_21_22)
 
-assignments_data_datetime['Date assigned'] = pd.to_datetime(
-    assignments_data_datetime['Date assigned'], infer_datetime_format=True)
-assignments_data_datetime['Due date'] = pd.to_datetime(
-    assignments_data_datetime['Due date'], infer_datetime_format=True)
-assignments_data_datetime['Month'] = assignments_data_datetime[
-    'Date assigned'].to_numpy().astype('datetime64[M]')
-assignments_data_datetime['Week'] = assignments_data_datetime[
-    'Date assigned'].to_numpy().astype('datetime64[W]')
-assignments_data_datetime['Assignment length'] = (
-    assignments_data_datetime['Due date'] -
-    assignments_data_datetime['Date assigned']) / np.timedelta64(1, 'D')
-assignments_data_datetime['Assign_count'] = 1
+# assignments_data_datetime = pd.read_csv(
+#     'data/assignments/assignments_datetime_2023.csv')
 
-classlist = assignments_data_datetime['Class'].unique().tolist()
+# assignments_data_datetime['Date assigned'] = pd.to_datetime(
+#     assignments_data_datetime['Date assigned'], infer_datetime_format=True)
+
+# assignments_data_datetime['Due date'] = pd.to_datetime(
+#     assignments_data_datetime['Due date'], infer_datetime_format=True)
+
+# assignments_data_datetime['Month'] = assignments_data_datetime[
+#     'Date assigned'].to_numpy().astype('datetime64[M]')
+
+# assignments_data_datetime['Week'] = assignments_data_datetime[
+#     'Date assigned'].to_numpy().astype('datetime64[W]')
+
+# assignments_data_datetime['Assignment length'] = (
+#     assignments_data_datetime['Due date'] -
+#     assignments_data_datetime['Date assigned']) / np.timedelta64(1, 'D')
+
+# assignments_data_datetime['Assign_count'] = 1
 
 tab1, tab2 = st.tabs(['All classes', 'Single class drilldown'])
 
@@ -59,6 +66,18 @@ with tab1:
                                              options=['T1', 'T2', 'T3', 'T4'],
                                              default=['T1', 'T2', 'T3', 'T4'],
                                              key='filter_assign_terms')
+
+    with st.sidebar:
+        academic_year = st.selectbox(label='Academic year',
+                                     options=['2021/2022', '2022/2023'],
+                                     key='academic_year')
+
+    pre_2122 = preprocess_data(initial_21_22)
+    pre_2223 = preprocess_data(initial_22_23)
+
+    assignments_data_datetime = pre_2122 if academic_year == '2021/2022' else pre_2223
+
+    classlist = assignments_data_datetime['Class'].unique().tolist()
 
     c_left, c_right = st.columns([2, 1])
 
@@ -156,7 +175,7 @@ with tab2:
 
     with right_one:
         timeview_input = st.selectbox(label='Time view',
-                                      options=['Monthly', 'Weekly'])
+                                      options=['Weekly', 'Monthly'])
 
     left_two, right_two = st.columns(2)
 
@@ -199,11 +218,11 @@ with tab2:
 
     monthly_assignments_count_chart = plot_monthly_assignments_count(classData)
 
-    monthlyduration = plot_monthly_assignment_duration(classData)
+    # monthlyduration = plot_monthly_assignment_duration(classData)
 
     weekly_assignments_count_chart = plot_weekly_assignments_count(classData)
 
-    weeklyduration = plot_weekly_assignments_duration(classData)
+    # weeklyduration = plot_weekly_assignments_duration(classData)
 
     st.markdown('## Average number of assignments per student in {}'.format(
         chosen_class))
@@ -218,20 +237,20 @@ with tab2:
             '- A month is defined as the range between the first and last day of the month. This also means that, for example, an assignment assigned in September with a due date in October is thought to belong to September, not October.'
         )
         st.markdown(
-            '- The height of each bar corresponds to the average number of assignments for a chosen class between the tick marks (months or weeks) on each side. For example, there were 10 assignments on average per student between Sep 2021 and Oct 2021 in the CES Writing and Rhetoric class.'
+            '- "Avg length" legend on the right denotes the average assignment length in days as defined by *assignment due date* minus *assignment date assigned*'
         )
 
-    st.markdown(
-        '## Average length of assignment in days for {}'.format(chosen_class))
+    # st.markdown(
+    #     '## Average length of assignment in days for {}'.format(chosen_class))
 
-    st.altair_chart(
-        monthlyduration if timeview_input == 'Monthly' else weeklyduration,
-        use_container_width=True)
+    # st.altair_chart(
+    #     monthlyduration if timeview_input == 'Monthly' else weeklyduration,
+    #     use_container_width=True)
 
-    with st.expander('Explanation of the chart above', expanded=True):
-        st.markdown(
-            "- Assignment length is defined as the number of days between an assignment's *Due date* and *Date assigned*"
-        )
-        st.markdown(
-            '- Similarly to reading the above chart, the height of each bar corresponds to the average lenght in days for a chosen class between the tick marks (months or weeks) on each side. For example, the average length of assignments assigned between Sep 2021 and Oct 2021 in the CES Writing and Rhetoric class was a little more than 4 days.'
-        )
+    # with st.expander('Explanation of the chart above', expanded=True):
+    #     st.markdown(
+    #         "- Assignment length is defined as the number of days between an assignment's *Due date* and *Date assigned*"
+    #     )
+    #     st.markdown(
+    #         '- Similarly to reading the above chart, the height of each bar corresponds to the average lenght in days for a chosen class between the tick marks (months or weeks) on each side. For example, the average length of assignments assigned between Sep 2021 and Oct 2021 in the CES Writing and Rhetoric class was a little more than 4 days.'
+    #     )
