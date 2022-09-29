@@ -76,17 +76,26 @@ def plot_bar_chart_classes(df, aggfunction):
     df['Standard deviation'] = df['Standard deviation'].round(decimals=1)
     df['Mean'] = df['Mean'].round(decimals=1)
     df['Median'] = df['Median'].round(decimals=1)
+
     chart = alt.Chart(df).mark_bar().encode(
-        y=alt.Y(aggfunction),
+        y=alt.Y(aggfunction, axis=alt.Axis(gridOpacity=0.3)),
         x=alt.X('Class',
                 axis=alt.Axis(title=None, gridOpacity=0.4),
                 sort=alt.EncodingSortField(field=aggfunction,
                                            op='sum',
                                            order='descending')),
-        tooltip=['Class', 'Standard deviation']).properties(height=600)
+        tooltip=['Class', 'Standard deviation', 'Respondents'],
+        color=alt.Color('Respondents',
+                        scale=alt.Scale(scheme='goldgreen'),
+                        legend=alt.Legend(
+                            direction='vertical',
+                            titleAnchor='middle',
+                            gradientThickness=20,
+                            gradientLength=250,
+                            tickCount=10))).properties(height=600)
 
     chart_text = chart.mark_text(
-        align='left', baseline='middle', dx=-7,
+        align='left', baseline='middle', dx=-7, fontWeight=400,
         dy=-8).encode(text=alt.Text('{}'.format(aggfunction)))
 
     return (chart + chart_text)

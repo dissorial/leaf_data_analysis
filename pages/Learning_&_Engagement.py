@@ -9,7 +9,7 @@ from functools import reduce
 from PIL import Image
 
 st.set_page_config(layout="wide",
-                   page_title='questionnaire',
+                   page_title='Learning & Engagement',
                    initial_sidebar_state='expanded')
 
 tab1, tab2, tab3 = st.tabs(['General part', 'Class-wise #1', 'Class-wise #2'])
@@ -146,11 +146,16 @@ with tab2:
 
     filtered_classdata = get_classdata(isolated_df_class, grade_filter_class)
 
+    # st.dataframe(filtered_classdata)
     class_std = filtered_classdata.groupby(['Class']).std().reset_index()
     class_mean = filtered_classdata.groupby(['Class']).mean().reset_index()
-    class_median = filtered_classdata.groupby(['Class']).median().reset_index()
 
-    grouped_metrics = [class_std, class_mean, class_median]
+    class_median = filtered_classdata.groupby(['Class']).median().reset_index()
+    class_sum = filtered_classdata.groupby(['Class']).sum().reset_index()
+    sth = filtered_classdata.groupby(['Class'
+                                      ]).size().reset_index(name='Respondents')
+
+    grouped_metrics = [class_std, class_mean, class_median, sth]
     df_metrics = reduce(
         lambda left, right: pd.merge(left, right, on=['Class'], how='left'),
         grouped_metrics)
@@ -176,16 +181,19 @@ with tab3:
     single_class = decrypt_data('data/questionnaire/class_data_enc.csv')
     # single_class = pd.read_csv('data/questionnaire/class_data.csv')
 
-    chosen_class_single = st.selectbox(
-        label='Choose a class',
-        options=single_class['Class'].unique().tolist(),
-        key='chosen_class_single')
+    tab3_leftcol, tab3_rightcol = st.columns(2)
+
+    with tab3_leftcol:
+        chosen_class_single = st.selectbox(
+            label='Choose a class',
+            options=single_class['Class'].unique().tolist(),
+            key='chosen_class_single')
 
     fil_df = single_class[single_class['Class'] == chosen_class_single]
 
-    # grouped_single = fil_df.groupby(['Class']).mean().reset_index()
+    with tab3_rightcol:
+        st.metric(label='Number of respondents', value=fil_df.shape[0])
 
-    # melted = grouped_single.melt(id_vars=['Class'])
     questions = single_class.columns[2:-1].tolist()
 
     q3 = sns_violin(fil_df, questions[2])
