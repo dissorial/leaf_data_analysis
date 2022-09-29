@@ -78,7 +78,7 @@ def plot_bar_chart_classes(df, aggfunction):
     df['Median'] = df['Median'].round(decimals=1)
 
     chart = alt.Chart(df).mark_bar().encode(
-        y=alt.Y(aggfunction),
+        y=alt.Y(aggfunction, axis=alt.Axis(gridOpacity=0.3)),
         x=alt.X('Class',
                 axis=alt.Axis(title=None, gridOpacity=0.4),
                 sort=alt.EncodingSortField(field=aggfunction,
