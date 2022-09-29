@@ -9,7 +9,7 @@ from functools import reduce
 from PIL import Image
 
 st.set_page_config(layout="wide",
-                   page_title='questionnaire',
+                   page_title='Learning & Engagement',
                    initial_sidebar_state='expanded')
 
 tab1, tab2, tab3 = st.tabs(['General part', 'Class-wise #1', 'Class-wise #2'])
