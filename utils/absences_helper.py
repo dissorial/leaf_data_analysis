@@ -1,6 +1,7 @@
 import altair as alt
 import pandas as pd
 import numpy as np
+import streamlit as st
 
 
 def plot_monthly_absences_count(data, title):
@@ -81,6 +82,15 @@ def plot_absences_stacked(data, groupby_column):
                 stack='normalize'),
         color=alt.Color('Absence Status'),
         tooltip=['Absence Status', 'Total number']).interactive()
+
+    chart = alt.Chart(new_df).mark_bar().encode(
+        y=alt.Y(groupby_column, axis=alt.Axis(title=None), sort='-x'),
+        x=alt.X('Total number',
+                title='Percentage of absences',
+                axis=alt.Axis(format='%'),
+                stack='normalize'),
+        color=alt.Color('Absence Status'),
+        tooltip=['Absence Status', 'Total number'])
     return chart
 
 
