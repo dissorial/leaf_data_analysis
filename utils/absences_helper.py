@@ -77,7 +77,7 @@ def plot_absences_stacked(data, groupby_column):
     chart = alt.Chart(new_df).mark_bar().encode(
         y=alt.Y(groupby_column, sort='-x', axis=alt.Axis(title=None)),
         x=alt.X('Total number',
-                title='Percentage of traffic lights',
+                title='Percentage of absence status',
                 axis=alt.Axis(format='%'),
                 stack='normalize'),
         color=alt.Color('Absence Status'),

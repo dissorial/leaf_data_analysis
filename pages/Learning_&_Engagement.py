@@ -1,10 +1,7 @@
 import streamlit as st
-import numpy as np
 import pandas as pd
-import altair as alt
 from utils.questionnaire_helper import get_classdata, get_remaining_questions, plot_barchart_answers, get_question_data, get_mean_data, get_median_data, get_std_data, plot_bar_chart_classes, sns_violin
 from utils.data_load import decrypt_data
-import seaborn as sns
 from functools import reduce
 from PIL import Image
 
@@ -47,7 +44,7 @@ with tab1:
             'Questions 6 and 7 were free response questions, the answers to which are displayed at the bottom in a table.'
         )
 
-    df_csv = decrypt_data('data/questionnaire/general_data_enc.csv')
+    df_csv = decrypt_data('data/21_22/questionnaire/general_q_2122.csv')
     # df_csv = pd.read_csv('data/questionnaire/general_data.csv')
 
     st.markdown('## Questions 1-4')
@@ -118,7 +115,7 @@ with tab2:
             '- Hover with your mouse over the bar chart to see the standard deviation for a particular class'
         )
 
-    classdata_df = decrypt_data('data/questionnaire/class_data_enc.csv')
+    classdata_df = decrypt_data('data/21_22/questionnaire/class_wise_2122.csv')
     # classdata_df = pd.read_csv('data/questionnaire/class_data.csv')
     classdata_questions = classdata_df.columns[2:-1].tolist()
 
@@ -178,7 +175,7 @@ with tab3:
         )
         st.image(violin_image)
 
-    single_class = decrypt_data('data/questionnaire/class_data_enc.csv')
+    single_class = decrypt_data('data/21_22/questionnaire/class_wise_2122.csv')
     # single_class = pd.read_csv('data/questionnaire/class_data.csv')
 
     tab3_leftcol, tab3_rightcol = st.columns(2)

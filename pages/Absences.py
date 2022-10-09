@@ -7,7 +7,7 @@ st.set_page_config(layout="wide",
                    page_title='Absences',
                    initial_sidebar_state='expanded')
 
-absences_data = decrypt_data('data/absences/Absences_jup_enc.csv')
+absences_data = decrypt_data('data/21_22/absences/absences_2122.csv')
 
 #plotting charts
 tab1, tab2 = st.tabs(['All classes', 'Single class drilldown'])
