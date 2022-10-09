@@ -6,8 +6,8 @@ st.set_page_config(layout="wide",
                    page_title='Traffic lights',
                    initial_sidebar_state='expanded')
 
-df_wide = decrypt_data('data/traffic/wide_traffic_lights_enc.csv')
-df_long = decrypt_data('data/traffic/long_traffic_lights_enc.csv')
+df_wide = decrypt_data('data/21_22/traffic/wide_traffic_2122.csv')
+df_long = decrypt_data('data/traffic/long_traffic_2122.csv')
 # df_wide = pd.read_csv('data/traffic/wide_traffic_lights.csv')
 # df_long = pd.read_csv('data/traffic/long_traffic_lights.csv')
 

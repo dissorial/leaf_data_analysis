@@ -6,7 +6,7 @@ st.set_page_config(layout="wide",
                    page_title='Grades',
                    initial_sidebar_state='expanded')
 
-grades_data = decrypt_data('data/grades/Grades_enc.csv')
+grades_data = decrypt_data('data/21_22/grades/grades_2122.csv')
 
 tab1, tab2 = st.tabs(['All classes', 'Single class drilldown'])
 

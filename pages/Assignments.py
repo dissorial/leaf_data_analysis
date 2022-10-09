@@ -8,9 +8,10 @@ st.set_page_config(layout="wide",
                    page_title='Assignments',
                    initial_sidebar_state='expanded')
 
-initial_21_22 = decrypt_data('data/assignments/assignments_datetime01_enc.csv')
+initial_21_22 = decrypt_data(
+    'data/21_22/assignments/assignments_datetime_2122.csv')
 initial_22_23 = decrypt_data(
-    'data/assignments/assignments_datetime_2023_enc.csv')
+    'data/22_23/assignments/assignments_datetime_2223.csv')
 # initial_22_23 = pd.read_csv('data/assignments/assignments_datetime_2023.csv')
 
 # assignments_data_datetime = preprocess_data(initial_21_22)

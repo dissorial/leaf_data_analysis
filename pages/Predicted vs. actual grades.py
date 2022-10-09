@@ -2,12 +2,14 @@ import streamlit as st
 from sklearn.metrics import mean_absolute_error
 from utils.predicted_helper import wide_to_long, plot_bar_chart_pred_v_actual, get_all_classes_mae_df, get_all_correct_predictions_df, plot_percentage_correct, plot_mae_all_classes
 from utils.data_load import decrypt_data
+import numpy as np
+from scipy import stats
 
 st.set_page_config(layout="wide",
                    page_title='Predicted vs. actdual grades',
                    initial_sidebar_state='expanded')
 
-df = decrypt_data('data/pred/pred_v_actual_ids_enc.csv')
+df = decrypt_data('data/21_22/pred/pred_v_actual_2122.csv')
 
 #for selectbox down the line
 all_classes = df['Class'].unique().tolist()
@@ -20,6 +22,8 @@ all_correct_predictions_df = get_all_correct_predictions_df(df)
 
 mae_chart = plot_mae_all_classes(all_classes_mae_df)
 percentage_correct_chart = plot_percentage_correct(all_correct_predictions_df)
+
+kendall_tau = stats.kendalltau(df['Predicted Grade'], df['Actual'])
 
 class_filter = st.selectbox(label='Class filter',
                             options=class_options,
@@ -79,6 +83,16 @@ with three:
               value='{} out of {}'.format(number_of_correct_predictions,
                                           df.shape[0]))
 
+# with one:
+#     st.metric(label="Correlation (Kendall's Tau)",
+#               value=round(kendall_tau.correlation, 2))
+# with two:
+#     st.metric(label='P-value',
+#               value='{}{}'.format(
+#                   '<' if kendall_tau.pvalue < 0.05 else '~',
+#                   '0.05' if kendall_tau.pvalue < 0.05 else round(
+#                       kendall_tau.pvalue, 3)))
+
 with st.expander('Percetange of correct predictions across all classes',
                  expanded=True):
     st.info('Hover over the chart for additional information')
@@ -88,3 +102,13 @@ with st.expander('Mean absolute error of predictions across all classes',
                  expanded=True):
     st.info('Hover over the chart for additional information')
     st.altair_chart(mae_chart, use_container_width=True)
+
+with st.expander("Other metrics (only applies to data for all classes)",
+                 expanded=True):
+    other_metrics_left, other_metrics_right = st.columns(2)
+
+    with other_metrics_left:
+        st.metric(label="Correlation (Kendall Tau)",
+                  value=round(kendall_tau.correlation, 2))
+    with other_metrics_right:
+        st.metric(label='p-value', value='<0.01')
