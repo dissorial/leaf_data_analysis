@@ -48,22 +48,86 @@ if (len(hall_filter) == 0 or len(year_filter) == 0):
 
 default_groupings = ['Hall', 'Term', 'Year']
 with meta_right_col:
-    split_input = st.selectbox(label='Outer group',
+    split_input = st.selectbox(label='Inner group',
                                options=default_groupings,
                                key='color_input')
 
-other_groupings = [x for x in default_groupings if x != split_input]
+other_groupings = [x for x in default_groupings if x != split_input] + ['None']
 
 with meta_right_col:
-    col_inupt = st.selectbox(label='Inner group',
+    col_inupt = st.selectbox(label='Outer group',
                              options=other_groupings,
                              key='col_input',
                              index=1)
 
-tab_sleep, tab_study, tab_entre, tab_eca, tab_phys, tab_leisure = st.tabs([
-    'Sleep', 'Academics', 'Entrepreneurship', 'Extra-curriculars',
-    'Physical activity', 'Leisure'
-])
+tab_general, tab_sleep, tab_study, tab_entre, tab_eca, tab_phys, tab_leisure = st.tabs(
+    [
+        'General', 'Sleep', 'Academics', 'Entrepreneurship',
+        'Extra-curriculars', 'Physical activity', 'Leisure'
+    ])
+
+with tab_general:
+    hallmeetings_like = get_question_data(df, df.columns[0])
+    chart_hallmeetings_like = plot_bar_chart(hallmeetings_like,
+                                             hallmeetings_like.columns[-1],
+                                             split_input,
+                                             split_input,
+                                             '-x',
+                                             col_inupt, [0, 10],
+                                             aggfunction_input,
+                                             axis_title='Average score',
+                                             w=1300)
+
+    with st.expander('How do you like hall meetings?', expanded=True):
+        st.altair_chart(chart_hallmeetings_like)
+
+    hall_atmosphere = get_question_data(df, df.columns[1])
+    chart_hall_atmosphere = plot_bar_chart(hall_atmosphere,
+                                           hall_atmosphere.columns[-1],
+                                           split_input,
+                                           split_input,
+                                           '-x',
+                                           col_inupt, [0, 10],
+                                           aggfunction_input,
+                                           axis_title='Average score',
+                                           w=1300)
+    with st.expander(
+            'How do you rate the atmosphere in the hall in terms of how welcome, safe and accepted you feel there?',
+            expanded=True):
+        st.altair_chart(chart_hall_atmosphere)
+
+    performance_extent = get_question_data(df, df.columns[2])
+    chart_performance_extent = plot_bar_chart(performance_extent,
+                                              performance_extent.columns[-1],
+                                              split_input,
+                                              split_input,
+                                              '-x',
+                                              col_inupt, [0, 10],
+                                              aggfunction_input,
+                                              axis_title='Average score',
+                                              w=1300)
+    with st.expander(
+            'To what extent has your residential experience helped/harmed your performance at LEAF Academy?',
+            expanded=True):
+        st.altair_chart(chart_performance_extent)
+
+    residential_experience = get_question_data(df, df.columns[3])
+    chart_residential_experience = plot_bar_chart(
+        residential_experience,
+        residential_experience.columns[-1],
+        split_input,
+        split_input,
+        '-x',
+        col_inupt, [0, 10],
+        aggfunction_input,
+        axis_title='Average score',
+        w=1300)
+
+    with st.expander(
+            'How did you enjoy your residential experience in these Terms in general?',
+            expanded=True):
+        st.altair_chart(chart_residential_experience)
+
 with tab_sleep:
     st.markdown(
         '- *On average, how many hours of sleep do you get per day (includes afternoon naps)?*'
