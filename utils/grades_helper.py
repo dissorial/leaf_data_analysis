@@ -1,6 +1,5 @@
 import altair as alt
 
-
 def plot_altair_histogram(df, chart_type_input, barwidth):
 
     chart = alt.Chart(df).mark_bar(size=barwidth).encode(

@@ -2,7 +2,6 @@ import streamlit as st
 from sklearn.metrics import mean_absolute_error
 from utils.predicted_helper import wide_to_long, plot_bar_chart_pred_v_actual, get_all_classes_mae_df, get_all_correct_predictions_df, plot_percentage_correct, plot_mae_all_classes
 from utils.data_load import decrypt_data
-import numpy as np
 from scipy import stats
 
 st.set_page_config(layout="wide",
@@ -11,7 +10,6 @@ st.set_page_config(layout="wide",
 
 df = decrypt_data('data/21_22/pred/pred_v_actual_2122.csv')
 
-#for selectbox down the line
 all_classes = df['Class'].unique().tolist()
 class_options = ['All classes'] + all_classes
 
@@ -82,16 +80,6 @@ with three:
     st.metric(label='Correct predictdions',
               value='{} out of {}'.format(number_of_correct_predictions,
                                           df.shape[0]))
-
-# with one:
-#     st.metric(label="Correlation (Kendall's Tau)",
-#               value=round(kendall_tau.correlation, 2))
-# with two:
-#     st.metric(label='P-value',
-#               value='{}{}'.format(
-#                   '<' if kendall_tau.pvalue < 0.05 else '~',
-#                   '0.05' if kendall_tau.pvalue < 0.05 else round(
-#                       kendall_tau.pvalue, 3)))
 
 with st.expander('Percetange of correct predictions across all classes',
                  expanded=True):

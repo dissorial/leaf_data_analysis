@@ -45,7 +45,6 @@ with tab1:
         )
 
     df_csv = decrypt_data('data/21_22/questionnaire/general_q_2122.csv')
-    # df_csv = pd.read_csv('data/questionnaire/general_data.csv')
 
     st.markdown('## Questions 1-4')
     selected_question = st.selectbox(
@@ -116,7 +115,6 @@ with tab2:
         )
 
     classdata_df = decrypt_data('data/21_22/questionnaire/class_wise_2122.csv')
-    # classdata_df = pd.read_csv('data/questionnaire/class_data.csv')
     classdata_questions = classdata_df.columns[2:-1].tolist()
 
     col1_left, col2_right = st.columns(2)
@@ -143,7 +141,6 @@ with tab2:
 
     filtered_classdata = get_classdata(isolated_df_class, grade_filter_class)
 
-    # st.dataframe(filtered_classdata)
     class_std = filtered_classdata.groupby(['Class']).std().reset_index()
     class_mean = filtered_classdata.groupby(['Class']).mean().reset_index()
 
@@ -176,7 +173,6 @@ with tab3:
         st.image(violin_image)
 
     single_class = decrypt_data('data/21_22/questionnaire/class_wise_2122.csv')
-    # single_class = pd.read_csv('data/questionnaire/class_data.csv')
 
     tab3_leftcol, tab3_rightcol = st.columns(2)
 

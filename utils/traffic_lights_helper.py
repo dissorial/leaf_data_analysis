@@ -1,6 +1,4 @@
 import altair as alt
-import pandas as pd
-
 
 def get_filtered_traffic_data(df, filter_years, filter_terms):
     return df[(df['Year'].isin(filter_years))

@@ -1,7 +1,5 @@
 import streamlit as st
-import numpy as np
 import pandas as pd
-import altair as alt
 from PIL import Image
 from utils.residential_helper import get_question_data, merge_business_weekend, plot_bar_chart
 from utils.data_load import decrypt_data
@@ -13,7 +11,6 @@ st.set_page_config(layout="wide",
                    initial_sidebar_state='expanded')
 
 df = decrypt_data('data/21_22/residential_survey/residential_survey_2122.csv')
-# df = pd.read_csv('data/21_22/residential_survey/residential_survey_2122.csv')
 
 st.markdown('# Residential survey responses 2021/2022')
 
@@ -216,8 +213,6 @@ with tab_entre:
     with right_col_entre:
         st.markdown('## Weekend')
         st.altair_chart(entre_weekend_chart)
-
-# st.write(entre_data_merged[entre_data_merged['type'] == 'weekday'].describe())
 
 with tab_eca:
 
