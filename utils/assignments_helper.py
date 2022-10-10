@@ -1,10 +1,6 @@
 import altair as alt
 import pandas as pd
 import numpy as np
-import streamlit as st
-import seaborn as sns
-import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
 
 
 def preprocess_data(df):
@@ -68,10 +64,7 @@ def plot_weekly_assignments_duration(data):
 
     xmin = data['Date assigned'].min()
     xmax = data['Date assigned'].max()
-    # n_students = data['Student'].unique().tolist()
     domain_pd = pd.to_datetime([xmin, xmax]).astype(int) / 10**6
-    # domain_pd = pd.to_datetime(['2021-09-01', '2022-08-24'
-    #                             ]).astype(int) / 10**6
 
     grouped_df = data.groupby(
         ['Class', pd.Grouper(key='Date assigned',
@@ -96,8 +89,6 @@ def plot_weekly_assignments_duration(data):
 
 
 def plot_monthly_assignments_count(data):
-    # domain_pd = pd.to_datetime(['2021-08-31', '2022-08-24'
-    #                             ]).astype(int) / 10**6
     n_students = data['Student'].unique().tolist()
     df_grouped = data.groupby(by=['Class', 'Month']).sum().reset_index()
     df_grouped['avg'] = df_grouped['Assign_count'] / len(n_students)

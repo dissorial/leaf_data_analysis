@@ -1,7 +1,5 @@
 import altair as alt
 import pandas as pd
-import numpy as np
-import streamlit as st
 
 
 def plot_monthly_absences_count(data, title):
@@ -53,7 +51,6 @@ def plot_weekly_absences_count(data, title):
 def plot_daily_absences_count(data, title):
     n_students = data['Student'].unique().tolist()
     new_df = data.groupby(['Day of Week']).sum().reset_index()
-    # new_df['student_count'] = len(all_student_count)
     new_df['avg'] = new_df['abs_count'] / len(n_students)
 
     chart = alt.Chart(new_df).mark_bar().encode(

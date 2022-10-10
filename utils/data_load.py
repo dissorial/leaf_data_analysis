@@ -15,7 +15,6 @@ def decrypt_data(filepath):
     decrypted = fernet.decrypt(encrypted)
     df = pd.read_csv(io.StringIO(decrypted.decode('utf-8')))
     return df
-    # return decrypted
 
 
 def get_classdata(df, input_class, input_terms):

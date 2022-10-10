@@ -1,8 +1,5 @@
-import streamlit as st
-import numpy as np
 import pandas as pd
 import altair as alt
-import math
 import seaborn as sns
 from matplotlib import pyplot as plt
 
@@ -55,7 +52,6 @@ def get_std_data(df):
 
 
 def get_remaining_questions(df, free_response_question_input):
-    # return df[[df.columns[5], 'Grade']]
     return df[[free_response_question_input, 'Grade']]
 
 
