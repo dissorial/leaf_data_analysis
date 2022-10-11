@@ -17,7 +17,7 @@ def plot_bar_chart(df,
                    y_domain,
                    aggfunction,
                    axis_title='Average number of hours per student',
-                   w=600):
+                   w=550):
 
     chart_def = alt.Chart(df).mark_bar().encode(
         x=alt.X(x_axis,
