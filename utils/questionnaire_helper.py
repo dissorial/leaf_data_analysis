@@ -35,7 +35,7 @@ def get_question_data(df, chosen_question):
     melted = merged.melt(id_vars=['Grade'])
     melted['res'] = 1
     melted['value'] = melted['value'].str.strip()
-    st.dataframe(melted)
+
 
     grouped = melted.groupby(['value']).sum().reset_index()
 
