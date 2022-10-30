@@ -14,9 +14,9 @@ with st.sidebar:
 
 df_wide_2122 = decrypt_data('data/21_22/traffic/wide_traffic_2122.csv')
 df_long_2122 = decrypt_data('data/21_22/traffic/long_traffic_2122.csv')
-df_wide_2223 = pd.read_csv(
+df_wide_2223 = decrypt_data(
     'data/22_23/traffic_lights/wide_traffic_lights_2223.csv')
-df_long_2223 = pd.read_csv(
+df_long_2223 = decrypt_data(
     'data/22_23/traffic_lights/long_traffic_lights_2223.csv')
 
 df_wide = df_wide_2122 if academic_year == '2021/2022' else df_wide_2223

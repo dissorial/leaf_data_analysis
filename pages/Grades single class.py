@@ -13,7 +13,7 @@ with st.sidebar:
                                  key='academic_year')
 
 grades_2122 = decrypt_data('data/21_22/grades/grades_2122.csv')
-grades_2223 = pd.read_csv('data/22_23/grades/grades_2223.csv')
+grades_2223 = decrypt_data('data/22_23/grades/grades_2223.csv')
 
 grades_data = grades_2122 if academic_year == '2021/2022' else grades_2223
 
