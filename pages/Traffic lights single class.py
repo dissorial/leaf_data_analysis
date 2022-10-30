@@ -1,13 +1,26 @@
 import streamlit as st
 from utils.traffic_lights_helper import plot_trafficLights_stacked, plot_traffic_meta, get_filtered_traffic_data
 from utils.data_load import decrypt_data
+import pandas as pd
 
 st.set_page_config(layout="wide",
                    page_title='Traffic lights: single class',
                    initial_sidebar_state='expanded')
 
-df_wide = decrypt_data('data/21_22/traffic/wide_traffic_2122.csv')
-df_long = decrypt_data('data/21_22/traffic/long_traffic_2122.csv')
+with st.sidebar:
+    academic_year = st.selectbox(label='Academic year',
+                                 options=['2021/2022', '2022/2023'],
+                                 key='academic_year')
+
+df_wide_2122 = decrypt_data('data/21_22/traffic/wide_traffic_2122.csv')
+df_long_2122 = decrypt_data('data/21_22/traffic/long_traffic_2122.csv')
+df_wide_2223 = pd.read_csv(
+    'data/22_23/traffic_lights/wide_traffic_lights_2223.csv')
+df_long_2223 = pd.read_csv(
+    'data/22_23/traffic_lights/long_traffic_lights_2223.csv')
+
+df_wide = df_wide_2122 if academic_year == '2021/2022' else df_wide_2223
+df_long = df_long_2122 if academic_year == '2021/2022' else df_long_2223
 
 st.markdown('# Traffic lights: single class')
 

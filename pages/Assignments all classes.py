@@ -6,10 +6,8 @@ st.set_page_config(layout="wide",
                    page_title='Assignments: all classes',
                    initial_sidebar_state='expanded')
 
-initial_21_22 = decrypt_data(
-    'data/21_22/assignments/assignments_datetime_2122.csv')
-initial_22_23 = decrypt_data(
-    'data/22_23/assignments/assignments_datetime_2223.csv')
+initial_21_22 = decrypt_data('data/21_22/assignments/assignments_2122.csv')
+initial_22_23 = decrypt_data('data/22_23/assignments/assignments_2223.csv')
 
 st.markdown('# Assignments: all classes')
 

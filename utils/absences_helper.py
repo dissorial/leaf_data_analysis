@@ -1,8 +1,15 @@
 import altair as alt
 import pandas as pd
+import streamlit as st
 
 
-def plot_monthly_absences_count(data, title):
+def plot_monthly_absences_count(data, title, _academic_year):
+
+    _year_domain = 2021 if _academic_year == '2021/2022' else 2022
+    domain_pd = pd.to_datetime([
+        f'{_year_domain}-08-01', f'{_year_domain+1  }-06-01'
+    ]).astype(int) / 10**6
+
     n_students = data['Student'].unique().tolist()
     df_grouped = data.groupby(['Month']).sum().reset_index()
     df_grouped['avg'] = df_grouped['abs_count'] / len(n_students)
@@ -11,7 +18,8 @@ def plot_monthly_absences_count(data, title):
 
     chart = alt.Chart(df_grouped).mark_bar().encode(
         x=alt.X('yearmonth(Month):T',
-                axis=alt.Axis(tickCount=df_grouped.shape[0], title=None)),
+                axis=alt.Axis(tickCount=10, title=None),
+                scale=alt.Scale(domain=list(domain_pd))),
         y=alt.Y('avg',
                 scale=alt.Scale(domain=[0, y_domain + 1]),
                 axis=alt.Axis(tickMinStep=1,
@@ -21,10 +29,15 @@ def plot_monthly_absences_count(data, title):
     return chart
 
 
-def plot_weekly_absences_count(data, title):
+def plot_weekly_absences_count(data, title, _academic_year):
+
+    _year_domain = 2021 if _academic_year == '2021/2022' else 2022
     n_students = data['Student'].unique().tolist()
-    domain_pd = pd.to_datetime(['2021-09-01', '2022-06-01'
-                                ]).astype(int) / 10**6
+    domain_pd = pd.to_datetime([
+        f'{_year_domain}-09-01', f'{_year_domain+1  }-06-01'
+    ]).astype(int) / 10**6
+    # domain_pd = pd.to_datetime(['2021-09-01', '2022-06-01'
+    #                             ]).astype(int) / 10**6
 
     grouped_df = data.groupby(
         [pd.Grouper(key='Attendance Date', freq='W-MON')]).sum().reset_index()

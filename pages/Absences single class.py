@@ -7,7 +7,15 @@ st.set_page_config(layout="wide",
                    page_title='Absences: single class',
                    initial_sidebar_state='expanded')
 
-absences_data = decrypt_data('data/21_22/absences/absences_2122.csv')
+with st.sidebar:
+    academic_year = st.selectbox(label='Academic year',
+                                 options=['2021/2022', '2022/2023'],
+                                 key='academic_year')
+
+absences_2122 = decrypt_data('data/21_22/absences/absences_2122.csv')
+absecnes_2223 = pd.read_csv('data/22_23/absences/absences_2223.csv')
+
+absences_data = absences_2122 if academic_year == '2021/2022' else absecnes_2223
 
 statuses = absences_data['Absence Status'].unique().tolist()
 
@@ -108,9 +116,9 @@ with tab_count:
 
 with tab_over_time:
     weekly_count_chart_single = plot_weekly_absences_count(
-        classdata, "Average number of absences by week")
+        classdata, "Average number of absences by week", academic_year)
     monthly_count_chart_single = plot_monthly_absences_count(
-        classdata, "Average number of absences by month")
+        classdata, "Average number of absences by month", academic_year)
     daily_count_chart_single = plot_daily_absences_count(
         classdata, "Average number of absences by day of week")
 

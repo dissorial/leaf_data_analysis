@@ -55,7 +55,7 @@ def plot_weekly_assignments_count(data):
                             gradientThickness=20,
                             gradientLength=250,
                             tickCount=grouped_df.shape[0]))).properties(
-                                height=400).interactive(bind_y=False)
+                                height=400)
 
     return chart
 
@@ -111,8 +111,7 @@ def plot_monthly_assignments_count(data):
                             titleAnchor='middle',
                             gradientThickness=20,
                             gradientLength=250,
-                            tickCount=10))).properties(height=400).interactive(
-                                bind_y=False)
+                            tickCount=10))).properties(height=400)
     return chart
 
 

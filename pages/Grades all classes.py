@@ -1,16 +1,26 @@
 import streamlit as st
 from utils.grades_helper import grades_meta, get_filtered_grades_data, plot_altair_histogram
 from utils.data_load import decrypt_data
+import pandas as pd
 
 st.set_page_config(layout="wide",
                    page_title='Grades: all classes',
                    initial_sidebar_state='expanded')
 
-grades_data = decrypt_data('data/21_22/grades/grades_2122.csv')
+with st.sidebar:
+    academic_year = st.selectbox(label='Academic year',
+                                 options=['2021/2022', '2022/2023'],
+                                 key='academic_year')
+
+grades_2122 = decrypt_data('data/21_22/grades/grades_2122.csv')
+grades_2223 = pd.read_csv('data/22_23/grades/grades_2223.csv')
+
+grades_data = grades_2122 if academic_year == '2021/2022' else grades_2223
 
 st.markdown('# Grades: all classes')
 
 with st.expander('Grades legend (numerical vs oridnal)'):
+
     st.markdown('- A+ = 10')
     st.markdown('- A = 9')
     st.markdown('- A- = 8')
