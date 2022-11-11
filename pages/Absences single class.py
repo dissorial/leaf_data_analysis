@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from utils.absences_helper import plot_daily_absences_count, plot_monthly_absences_count, plot_weekly_absences_count, plot_absences_stacked, absences_meta
+from utils.absences_helper import plot_daily_absences_count, plot_monthly_absences_count, plot_weekly_absences_count, plot_absences_stacked, absences_meta, seaborn_week
 from utils.data_load import decrypt_data
 
 st.set_page_config(layout="wide",
@@ -18,14 +18,21 @@ absecnes_2223 = decrypt_data('data/22_23/absences/absences_2223.csv')
 absences_data = absences_2122 if academic_year == '2021/2022' else absecnes_2223
 
 statuses = absences_data['Absence Status'].unique().tolist()
+absences_data['abs_count'] = 1
 
 absences_data['Attendance Date'] = pd.to_datetime(
     absences_data['Attendance Date'], infer_datetime_format=True)
-absences_data['Month'] = absences_data['Attendance Date'].to_numpy().astype(
-    'datetime64[M]')
-absences_data['Week'] = absences_data['Attendance Date'].to_numpy().astype(
-    'datetime64[W]')
-absences_data['abs_count'] = 1
+
+absences_data['Month'] = absences_data['Attendance Date'].dt.strftime('%B')
+absences_data['Week'] = absences_data['Attendance Date'].dt.strftime('%b %d')
+# df_gr = absences_data.groupby(['Attendance Date']).sum().reset_index()
+
+# st.dataframe(df_gr)
+
+# absences_data['Month'] = absences_data['Attendance Date'].to_numpy().astype(
+#     'datetime64[M]')
+# absences_data['Week'] = absences_data['Attendance Date'].to_numpy().astype(
+#     'datetime64[W]')
 
 
 def get_filtered_absesence_data(df, years, status, terms):
@@ -115,6 +122,13 @@ with tab_count:
     st.altair_chart(absence_meta_single, use_container_width=True)
 
 with tab_over_time:
+
+    # sea_chart = seaborn_bar(classdata)
+    # st.pyplot(sea_chart.figure)
+
+    sea_week = seaborn_week(classdata)
+    st.pyplot(sea_week.figure)
+
     weekly_count_chart_single = plot_weekly_absences_count(
         classdata, "Average number of absences by week", academic_year)
     monthly_count_chart_single = plot_monthly_absences_count(

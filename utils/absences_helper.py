@@ -1,6 +1,51 @@
 import altair as alt
 import pandas as pd
 import streamlit as st
+import seaborn as sns
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+import pandas as pd
+import numpy as np
+
+# def seaborn_bar(data):
+
+#     n_students = data['Student'].unique().tolist()
+
+#     data['Attendance Date'] = data['Attendance Date'].dt.strftime('%B')
+#     df_grouped = data.groupby(['Attendance Date']).sum().reset_index()
+#     df_grouped['avg'] = df_grouped['abs_count'] / len(n_students)
+#     od = [
+#         'September', 'October', 'November', 'December', 'January', 'February',
+#         'March', 'April', 'May'
+#     ]
+#     fig = plt.figure(figsize=(20, 3))
+#     chart = sns.barplot(data=df_grouped,
+#                         x='Attendance Date',
+#                         y='avg',
+#                         order=od)
+#     return chart
+
+
+def seaborn_week(data):
+    n_students = data['Student'].unique().tolist()
+    # data['Attendance Date'] = data['Attendance Date'].dt.strftime('%b %d')
+
+    df_grouped = data.groupby(['Week', 'Attendance Date']).sum().reset_index()
+    df_grouped.sort_values(by=['Attendance Date'],
+                           inplace=True,
+                           ascending=True)
+    st.dataframe(df_grouped)
+    df_grouped['avg'] = df_grouped['abs_count'] / len(n_students)
+
+    fig = plt.figure(figsize=(20, 3))
+    chart = sns.barplot(data=df_grouped,
+                        x='Week',
+                        y='avg',
+                        color='lightskyblue')
+    chart.set_xticklabels(chart.get_xticklabels(), rotation=90)
+
+    # chart.set_xticks(np.arange(0, 20, 4))
+    return chart
 
 
 def plot_monthly_absences_count(data, title, _academic_year):
