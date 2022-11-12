@@ -36,7 +36,7 @@ def plot_weekly_assignments_count(data):
     grouped_df['Avg length'] = grouped_df['Assignment length'] / grouped_df[
         'Assign_count']
 
-    chart = alt.Chart(grouped_df).mark_bar(size=24).encode(
+    chart = alt.Chart(grouped_df).mark_bar(size=16).encode(
         x=alt.X('Date assigned',
                 axis=alt.Axis(tickCount=50,
                               labelAngle=-90,
@@ -47,24 +47,24 @@ def plot_weekly_assignments_count(data):
                 axis=alt.Axis(tickMinStep=0.5,
                               title='Average number of assignments'),
                 scale=alt.Scale(domain=[0, ydomain + 0.5])),
-        color=alt.Color('Avg length',
-                        scale=alt.Scale(scheme='turbo'),
-                        legend=alt.Legend(
-                            direction='vertical',
-                            titleAnchor='middle',
-                            gradientThickness=20,
-                            gradientLength=250,
-                            tickCount=grouped_df.shape[0]))).properties(
-                                height=400)
+        color=alt.Color(
+            'Avg length',
+            scale=alt.Scale(scheme='turbo'),
+            legend=alt.Legend(
+                direction='vertical',
+                titleAnchor='middle',
+                gradientThickness=20,
+                gradientLength=250,
+                tickCount=grouped_df.shape[0]))).properties(height=400)
 
     return chart
 
 
 def plot_weekly_assignments_duration(data):
 
-    xmin = data['Date assigned'].min()
-    xmax = data['Date assigned'].max()
-    domain_pd = pd.to_datetime([xmin, xmax]).astype(int) / 10**6
+    # xmin = data['Date assigned'].min()
+    # xmax = data['Date assigned'].max()
+    # domain_pd = pd.to_datetime([xmin, xmax]).astype(int) / 10**6
 
     grouped_df = data.groupby(
         ['Class', pd.Grouper(key='Date assigned',
@@ -73,12 +73,14 @@ def plot_weekly_assignments_duration(data):
     ydomain = grouped_df['Assignment length'].max()
 
     chart = alt.Chart(grouped_df).mark_bar(size=20).encode(
-        x=alt.X('Date assigned',
-                axis=alt.Axis(tickCount=grouped_df.shape[0],
-                              labelAngle=-90,
-                              format='%b %d, %y',
-                              title='Week'),
-                scale=alt.Scale(domain=list(domain_pd))),
+        x=alt.X(
+            'Date assigned',
+            axis=alt.Axis(tickCount=grouped_df.shape[0],
+                          labelAngle=-90,
+                          format='%b %d, %y',
+                          title='Week'),
+            # scale=alt.Scale(domain=list(domain_pd))
+        ),
         y=alt.Y('Assignment length',
                 axis=alt.Axis(tickMinStep=0.5,
                               title='Average assignment length in days'),
