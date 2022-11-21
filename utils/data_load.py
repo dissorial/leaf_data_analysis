@@ -28,3 +28,10 @@ def get_filtered_assignment_classdata(df, chosenclass, years,
     return df[(df['Class'] == chosenclass) & (df['Year'].isin(years)) &
               (df['Completion Status'].isin(completion_status)) &
               (df['Display Status'].isin(display_status))]
+
+
+def alt_get_filtered_assignment_classdata(df, years, completion_status,
+                                          display_status):
+    return df[(df['Year'].isin(years))
+              & (df['Completion Status'].isin(completion_status)) &
+              (df['Display Status'].isin(display_status))]

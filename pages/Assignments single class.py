@@ -1,14 +1,11 @@
 import streamlit as st
-from utils.assignments_helper import plot_weekly_assignments_count, plot_monthly_assignments_count, preprocess_data
-from utils.data_load import get_filtered_assignment_classdata, decrypt_data
+from utils.assignments_helper import preprocess_data, seaborn_barchart_create, seaborn_barchart_resampe_data, load_data_assignments
+from utils.data_load import get_filtered_assignment_classdata
 import pandas as pd
 
 st.set_page_config(layout="wide",
                    page_title='Assignments: single class',
                    initial_sidebar_state='expanded')
-
-initial_21_22 = decrypt_data('data/21_22/assignments/assignments_2122.csv')
-initial_22_23 = decrypt_data('data/22_23/assignments/assignments_2223.csv')
 
 st.markdown('# Assignments: single class')
 
@@ -17,29 +14,21 @@ with st.sidebar:
                                  options=['2021/2022', '2022/2023'],
                                  key='academic_year')
 
-pre_2122 = preprocess_data(initial_21_22)
-pre_2223 = preprocess_data(initial_22_23)
-
-assignments_data_datetime = pre_2122 if academic_year == '2021/2022' else pre_2223
-
+df_loaded = load_data_assignments(academic_year)
+assignments_data_datetime = preprocess_data(df_loaded)
 classlist = assignments_data_datetime['Class'].unique().tolist()
 
-left_one, right_one = st.columns(2)
+st.markdown('## Filter and select')
+left_one, middle_one, right_one = st.columns(3)
 
 with left_one:
     chosen_class = st.selectbox(label='Class', options=classlist, index=0)
-
-with right_one:
-    timeview_input = st.selectbox(label='Time view',
-                                  options=['Weekly', 'Monthly'])
-
-left_two, right_two = st.columns(2)
 
 available_years = assignments_data_datetime[
     assignments_data_datetime['Class'] ==
     chosen_class]['Year'].unique().tolist()
 
-with left_two:
+with middle_one:
     year_filters = st.multiselect(label='Filter years',
                                   options=available_years,
                                   default=available_years)
@@ -47,7 +36,7 @@ with left_two:
 available_display_stauts = assignments_data_datetime[
     assignments_data_datetime['Class'] ==
     chosen_class]['Display Status'].unique().tolist()
-with right_two:
+with right_one:
     display_status_filter = st.multiselect(label='Dispaly status',
                                            options=available_display_stauts,
                                            default=available_display_stauts)
@@ -70,15 +59,52 @@ classData = get_filtered_assignment_classdata(assignments_data_datetime,
                                               completion_status_filter,
                                               display_status_filter)
 
-monthly_assignments_count_chart = plot_monthly_assignments_count(classData)
+st.markdown('## Charts')
+with st.expander('Monthly', expanded=True):
+    st.markdown('## Average number of assignments per student in {}'.format(
+        chosen_class))
+    sea_monthly_count_data = seaborn_barchart_resampe_data(
+        classData, 'Month', 'Assign_count')
+    sea_monthly_count_chart = seaborn_barchart_create(
+        sea_monthly_count_data, 'Month', 'avg', [
+            'September', 'October', 'November', 'December', 'January',
+            'February', 'March', 'April', 'May'
+        ])
+    st.pyplot(sea_monthly_count_chart.figure)
 
-weekly_assignments_count_chart = plot_weekly_assignments_count(classData)
+    st.markdown('## Average length of assignments in {}'.format(chosen_class))
+    sea_monthly_duration_data = seaborn_barchart_resampe_data(classData,
+                                                              'Month',
+                                                              'Assign_count',
+                                                              duration=True)
+    sea_monthly_duration_chart = seaborn_barchart_create(
+        sea_monthly_duration_data, 'Month', 'avg', [
+            'September', 'October', 'November', 'December', 'January',
+            'February', 'March', 'April', 'May'
+        ])
+    st.pyplot(sea_monthly_duration_chart.figure)
 
-st.markdown(
-    '## Average number of assignments per student in {}'.format(chosen_class))
-st.altair_chart(monthly_assignments_count_chart if timeview_input == 'Monthly'
-                else weekly_assignments_count_chart,
-                use_container_width=True)
+with st.expander('Weekly', expanded=True):
+    st.markdown('## Average number of assignments per student in {}'.format(
+        chosen_class))
+    sea_weekly_count_data = seaborn_barchart_resampe_data(
+        classData, 'Week', 'Assign_count')
+    sea_weekly_count_chart = seaborn_barchart_create(sea_weekly_count_data,
+                                                     'Week',
+                                                     'avg',
+                                                     rotated_labels=True)
+    st.pyplot(sea_weekly_count_chart.figure)
+
+    st.markdown('## Average length of assignments in {}'.format(chosen_class))
+    sea_weekly_duration_data = seaborn_barchart_resampe_data(classData,
+                                                             'Week',
+                                                             'Assign_count',
+                                                             duration=True)
+    sea_weekly_duration_chart = seaborn_barchart_create(
+        sea_weekly_duration_data, 'Week', 'avg', rotated_labels=True)
+    st.pyplot(sea_weekly_duration_chart.figure)
+
+st.markdown('## Explanations')
 with st.expander('Explanation of the chart above'):
     st.markdown(
         '- The aggregate metric used for grouping the number of assignments below is "Date assigned" (as opposed to "Due date").'

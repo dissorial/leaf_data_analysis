@@ -10,13 +10,21 @@ st.set_page_config(layout="wide",
                    page_title='Residential Survey',
                    initial_sidebar_state='expanded')
 
-df = decrypt_data('data/21_22/residential_survey/residential_survey_2122.csv')
+with st.sidebar:
+    academic_year = st.selectbox(label='Academic year',
+                                 options=['2021/2022', '2022/2023'],
+                                 key='academic_year')
+
+df = decrypt_data(
+    'data/21_22/residential_survey/residential_survey_2122.csv'
+) if academic_year == '2021/2022' else decrypt_data(
+    'data/22_23/residential_survey/residential_survey_2223_t1.csv')
 
 st.markdown('# Residential survey responses 2021/2022')
 
-with st.expander('Information about questionnaire responses', expanded=True):
-    residential_q_img = Image.open('images/residential_q.png')
-    st.image(residential_q_img)
+# with st.expander('Information about questionnaire responses', expanded=True):
+#     residential_q_img = Image.open('images/residential_q.png')
+#     st.image(residential_q_img)
 
 meta_left_col, meta_right_col = st.columns(2)
 
