@@ -56,7 +56,7 @@ def seaborn_barchart_create(data,
                         x=x_axis,
                         y=y_axis,
                         order=x_axis_order,
-                        color=None,
+                        color='lightskyblue',
                         hue=hue_input)
     if rotated_labels:
         chart.set_xticklabels(chart.get_xticklabels(), rotation=90)
