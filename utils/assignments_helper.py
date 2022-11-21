@@ -1,6 +1,75 @@
 import altair as alt
 import pandas as pd
 import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from utils.data_load import decrypt_data
+
+
+def load_data_assignments(academicYear):
+    if academicYear == '2021/2022':
+        return decrypt_data('data/21_22/assignments/assignments_2122.csv')
+    elif academicYear == '2022/2023':
+        return decrypt_data('data/22_23/assignments/assignments_2223.csv')
+    else:
+        return decrypt_data('data/21_22/assignments/assignments_2122.csv')
+
+
+def resample_test(data,
+                  resampling_period_column,
+                  values_column,
+                  duration=False):
+    n_students = data['Student'].unique().tolist()
+    df_grouped = data.groupby([resampling_period_column,
+                               'Class']).sum().reset_index()
+    if duration:
+        df_grouped['avg'] = df_grouped['Assignment length'] / df_grouped[
+            values_column]
+    else:
+        df_grouped['avg'] = df_grouped[values_column] / len(n_students)
+    return df_grouped
+
+
+def seaborn_barchart_resampe_data(data,
+                                  resampling_period_column,
+                                  values_column,
+                                  duration=False):
+    n_students = data['Student'].unique().tolist()
+    df_grouped = data.groupby([resampling_period_column]).sum().reset_index()
+    if duration:
+        df_grouped['avg'] = df_grouped['Assignment length'] / df_grouped[
+            values_column]
+    else:
+        df_grouped['avg'] = df_grouped[values_column] / len(n_students)
+    return df_grouped
+
+
+def seaborn_barchart_create(data,
+                            x_axis,
+                            y_axis,
+                            x_axis_order=None,
+                            rotated_labels=False,
+                            chart_ylabel='',
+                            hue_input=None):
+    fig = plt.figure(figsize=(20, 4))
+    chart = sns.barplot(data=data,
+                        x=x_axis,
+                        y=y_axis,
+                        order=x_axis_order,
+                        color=None,
+                        hue=hue_input)
+    if rotated_labels:
+        chart.set_xticklabels(chart.get_xticklabels(), rotation=90)
+
+    chart.set_xlabel('')
+    chart.set_ylabel(chart_ylabel)
+    chart.grid()
+    chart.spines['top'].set_visible(False)
+    chart.spines['right'].set_visible(False)
+    chart.spines['bottom'].set_visible(False)
+    chart.spines['left'].set_visible(False)
+
+    return chart
 
 
 def preprocess_data(df):
@@ -8,113 +77,14 @@ def preprocess_data(df):
     df['Date assigned'] = pd.to_datetime(df['Date assigned'],
                                          infer_datetime_format=True)
     df['Due date'] = pd.to_datetime(df['Due date'], infer_datetime_format=True)
-    df['Month'] = df['Date assigned'].to_numpy().astype('datetime64[M]')
-    df['Week'] = df['Date assigned'].to_numpy().astype('datetime64[W]')
+    # df['Month'] = df['Date assigned'].to_numpy().astype('datetime64[M]')
+    df['Month'] = df['Date assigned'].dt.strftime('%B')
+    df['Week'] = df['Date assigned'].dt.strftime('%Y, %m Week %W')
+    # df['Week'] = df['Date assigned'].to_numpy().astype('datetime64[W]')
     df['Assignment length'] = (df['Due date'] -
                                df['Date assigned']) / np.timedelta64(1, 'D')
     df['Assign_count'] = 1
     return df
-
-
-def plot_weekly_assignments_count(data):
-
-    xmin = data['Date assigned'].min() - pd.to_timedelta(7, unit='d')
-    startYear = xmin.year
-    endYear = startYear + 1
-    n_students = data['Student'].unique().tolist()
-
-    domain_pd = pd.to_datetime([
-        '{}-09-01'.format(startYear), '{}-08-24'.format(endYear)
-    ]).astype(int) / 10**6
-
-    grouped_df = data.groupby(
-        ['Class', pd.Grouper(key='Date assigned',
-                             freq='W-SUN')]).sum().reset_index()
-    grouped_df['Avg #n of assignments per student'] = grouped_df[
-        'Assign_count'] / len(n_students)
-    ydomain = grouped_df['Avg #n of assignments per student'].max()
-    grouped_df['Avg length'] = grouped_df['Assignment length'] / grouped_df[
-        'Assign_count']
-
-    chart = alt.Chart(grouped_df).mark_bar(size=16).encode(
-        x=alt.X('Date assigned',
-                axis=alt.Axis(tickCount=50,
-                              labelAngle=-90,
-                              format='%b %d, %y',
-                              title='Week'),
-                scale=alt.Scale(domain=list(domain_pd))),
-        y=alt.Y('Avg #n of assignments per student',
-                axis=alt.Axis(tickMinStep=0.5,
-                              title='Average number of assignments'),
-                scale=alt.Scale(domain=[0, ydomain + 0.5])),
-        color=alt.Color(
-            'Avg length',
-            scale=alt.Scale(scheme='turbo'),
-            legend=alt.Legend(
-                direction='vertical',
-                titleAnchor='middle',
-                gradientThickness=20,
-                gradientLength=250,
-                tickCount=grouped_df.shape[0]))).properties(height=400)
-
-    return chart
-
-
-def plot_weekly_assignments_duration(data):
-
-    # xmin = data['Date assigned'].min()
-    # xmax = data['Date assigned'].max()
-    # domain_pd = pd.to_datetime([xmin, xmax]).astype(int) / 10**6
-
-    grouped_df = data.groupby(
-        ['Class', pd.Grouper(key='Date assigned',
-                             freq='W-SUN')]).mean().reset_index()
-
-    ydomain = grouped_df['Assignment length'].max()
-
-    chart = alt.Chart(grouped_df).mark_bar(size=20).encode(
-        x=alt.X(
-            'Date assigned',
-            axis=alt.Axis(tickCount=grouped_df.shape[0],
-                          labelAngle=-90,
-                          format='%b %d, %y',
-                          title='Week'),
-            # scale=alt.Scale(domain=list(domain_pd))
-        ),
-        y=alt.Y('Assignment length',
-                axis=alt.Axis(tickMinStep=0.5,
-                              title='Average assignment length in days'),
-                scale=alt.Scale(domain=[0, ydomain + 0.5]))).properties(
-                    height=400).interactive(bind_y=False)
-
-    return chart
-
-
-def plot_monthly_assignments_count(data):
-    n_students = data['Student'].unique().tolist()
-    df_grouped = data.groupby(by=['Class', 'Month']).sum().reset_index()
-    df_grouped['avg'] = df_grouped['Assign_count'] / len(n_students)
-    df_grouped['Avg length'] = df_grouped['Assignment length'] / df_grouped[
-        'Assign_count']
-    y_domain = df_grouped['avg'].max()
-    chart = alt.Chart(df_grouped).mark_bar().encode(
-        x=alt.X(
-            'yearmonth(Month):T',
-            axis=alt.Axis(tickCount=df_grouped.shape[0], title=None),
-        ),
-        y=alt.Y('avg',
-                scale=alt.Scale(domain=[0, y_domain + 1]),
-                axis=alt.Axis(tickMinStep=1,
-                              title='Average number of assignments')),
-        color=alt.Color('Avg length',
-                        scale=alt.Scale(scheme='turbo'),
-                        legend=alt.Legend(
-                            direction='vertical',
-                            titleAnchor='middle',
-                            gradientThickness=20,
-                            gradientLength=250,
-                            tickCount=10))).properties(height=400)
-    return chart
 
 
 def plot_monthly_assignment_duration(data):

@@ -6,123 +6,61 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import pandas as pd
 import numpy as np
-
-# def seaborn_bar(data):
-
-#     n_students = data['Student'].unique().tolist()
-
-#     data['Attendance Date'] = data['Attendance Date'].dt.strftime('%B')
-#     df_grouped = data.groupby(['Attendance Date']).sum().reset_index()
-#     df_grouped['avg'] = df_grouped['abs_count'] / len(n_students)
-#     od = [
-#         'September', 'October', 'November', 'December', 'January', 'February',
-#         'March', 'April', 'May'
-#     ]
-#     fig = plt.figure(figsize=(20, 3))
-#     chart = sns.barplot(data=df_grouped,
-#                         x='Attendance Date',
-#                         y='avg',
-#                         order=od)
-#     return chart
+from utils.data_load import decrypt_data
 
 
-def seaborn_week(data):
+def load_data_absences(academicYear):
+    if academicYear == '2021/2022':
+        return decrypt_data('data/21_22/absences/absences_2122.csv')
+    elif academicYear == '2022/2023':
+        return decrypt_data('data/22_23/absences/absences_2223.csv')
+    else:
+        return decrypt_data('data/21_22/absences/absences_2122.csv')
+
+
+def preprocess(loaded_data):
+    loaded_data['Attendance Date'] = pd.to_datetime(
+        loaded_data['Attendance Date'], infer_datetime_format=True)
+
+    loaded_data['abs_count'] = 1
+
+    loaded_data['Month'] = loaded_data['Attendance Date'].dt.strftime('%B')
+    loaded_data['Week'] = loaded_data['Attendance Date'].dt.strftime(
+        '%Y, %m Week %W')
+    return loaded_data
+
+
+def seaborn_barchart_resampe_data(data, resampling_period_column,
+                                  values_column):
     n_students = data['Student'].unique().tolist()
-    # data['Attendance Date'] = data['Attendance Date'].dt.strftime('%b %d')
+    df_grouped = data.groupby([resampling_period_column]).sum().reset_index()
+    df_grouped['avg'] = df_grouped[values_column] / len(n_students)
+    return df_grouped
 
-    df_grouped = data.groupby(['Week', 'Attendance Date']).sum().reset_index()
-    df_grouped.sort_values(by=['Attendance Date'],
-                           inplace=True,
-                           ascending=True)
-    st.dataframe(df_grouped)
-    df_grouped['avg'] = df_grouped['abs_count'] / len(n_students)
 
-    fig = plt.figure(figsize=(20, 3))
-    chart = sns.barplot(data=df_grouped,
-                        x='Week',
-                        y='avg',
+def seaborn_barchart_create(data,
+                            x_axis,
+                            y_axis,
+                            x_axis_order=None,
+                            rotated_labels=False,
+                            chart_ylabel=''):
+    fig = plt.figure(figsize=(20, 4))
+    chart = sns.barplot(data=data,
+                        x=x_axis,
+                        y=y_axis,
+                        order=x_axis_order,
                         color='lightskyblue')
-    chart.set_xticklabels(chart.get_xticklabels(), rotation=90)
-
-    # chart.set_xticks(np.arange(0, 20, 4))
-    return chart
-
-
-def plot_monthly_absences_count(data, title, _academic_year):
-
-    _year_domain = 2021 if _academic_year == '2021/2022' else 2022
-    domain_pd = pd.to_datetime([
-        f'{_year_domain}-08-01', f'{_year_domain+1  }-06-01'
-    ]).astype(int) / 10**6
-
-    n_students = data['Student'].unique().tolist()
-    df_grouped = data.groupby(['Month']).sum().reset_index()
-    df_grouped['avg'] = df_grouped['abs_count'] / len(n_students)
-
-    y_domain = df_grouped['avg'].max()
-
-    chart = alt.Chart(df_grouped).mark_bar().encode(
-        x=alt.X('yearmonth(Month):T',
-                axis=alt.Axis(tickCount=10, title=None),
-                scale=alt.Scale(domain=list(domain_pd))),
-        y=alt.Y('avg',
-                scale=alt.Scale(domain=[0, y_domain + 1]),
-                axis=alt.Axis(tickMinStep=1,
-                              title='Average number of absences'))).properties(
-                                  title=title).interactive(bind_y=False)
+    if rotated_labels:
+        chart.set_xticklabels(chart.get_xticklabels(), rotation=90)
+    chart.set_xlabel('')
+    chart.set_ylabel(chart_ylabel)
+    chart.grid()
+    chart.spines['top'].set_visible(False)
+    chart.spines['right'].set_visible(False)
+    chart.spines['bottom'].set_visible(False)
+    chart.spines['left'].set_visible(False)
 
     return chart
-
-
-def plot_weekly_absences_count(data, title, _academic_year):
-
-    _year_domain = 2021 if _academic_year == '2021/2022' else 2022
-    n_students = data['Student'].unique().tolist()
-    domain_pd = pd.to_datetime([
-        f'{_year_domain}-09-01', f'{_year_domain+1  }-06-01'
-    ]).astype(int) / 10**6
-    # domain_pd = pd.to_datetime(['2021-09-01', '2022-06-01'
-    #                             ]).astype(int) / 10**6
-
-    grouped_df = data.groupby(
-        [pd.Grouper(key='Attendance Date', freq='W-MON')]).sum().reset_index()
-    grouped_df['Avg #n of absences per student'] = grouped_df[
-        'abs_count'] / len(n_students)
-    ydomain = grouped_df['Avg #n of absences per student'].max()
-
-    chart = alt.Chart(grouped_df).mark_bar(size=20).encode(
-        x=alt.X('Attendance Date',
-                axis=alt.Axis(tickCount=40,
-                              labelAngle=-90,
-                              format='%b %d, %y',
-                              title=None),
-                scale=alt.Scale(domain=list(domain_pd))),
-        y=alt.Y('Avg #n of absences per student',
-                axis=alt.Axis(tickMinStep=0.5,
-                              title='Average number of absences'),
-                scale=alt.Scale(domain=[0, ydomain + 0.5]))).properties(
-                    title=title).interactive(bind_y=False)
-
-    return chart
-
-
-def plot_daily_absences_count(data, title):
-    n_students = data['Student'].unique().tolist()
-    new_df = data.groupby(['Day of Week']).sum().reset_index()
-    new_df['avg'] = new_df['abs_count'] / len(n_students)
-
-    chart = alt.Chart(new_df).mark_bar().encode(
-        x=alt.X('Day of Week',
-                sort=['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-                axis=alt.Axis(title=None)),
-        y=alt.Y('avg', axis=alt.Axis(
-            title='Average number of absences'))).properties(title=title)
-
-    chart_text = chart.mark_text(
-        align='left', baseline='middle', dy=15,
-        color='white').encode(text=alt.Text('mean(avg):Q', format=',.1f'))
-
-    return (chart + chart_text)
 
 
 def plot_absences_stacked(data, groupby_column):

@@ -1,14 +1,9 @@
 import streamlit as st
-from utils.assignments_helper import plot_all_assignments_stacked, assignments_meta, preprocess_data
-from utils.data_load import decrypt_data
+from utils.assignments_helper import plot_all_assignments_stacked, assignments_meta, preprocess_data, load_data_assignments
 
 st.set_page_config(layout="wide",
                    page_title='Assignments: all classes',
                    initial_sidebar_state='expanded')
-
-initial_21_22 = decrypt_data('data/21_22/assignments/assignments_2122.csv')
-initial_22_23 = decrypt_data('data/22_23/assignments/assignments_2223.csv')
-
 st.markdown('# Assignments: all classes')
 
 col1_assign, col2_assign, col3_assign = st.columns(3)
@@ -40,11 +35,8 @@ with st.sidebar:
                                  options=['2021/2022', '2022/2023'],
                                  key='academic_year')
 
-pre_2122 = preprocess_data(initial_21_22)
-pre_2223 = preprocess_data(initial_22_23)
-
-assignments_data_datetime = pre_2122 if academic_year == '2021/2022' else pre_2223
-
+df_loaded = load_data_assignments(academic_year)
+assignments_data_datetime = preprocess_data(df_loaded)
 classlist = assignments_data_datetime['Class'].unique().tolist()
 
 c_left, c_right = st.columns([2, 1])

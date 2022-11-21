@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from utils.absences_helper import plot_daily_absences_count, plot_monthly_absences_count, plot_weekly_absences_count, plot_absences_stacked, absences_meta
+from utils.absences_helper import plot_absences_stacked, absences_meta, seaborn_barchart_create, seaborn_barchart_resampe_data, load_data_absences, preprocess
 from utils.data_load import decrypt_data
 
 st.set_page_config(layout="wide",
@@ -12,10 +12,8 @@ with st.sidebar:
                                  options=['2021/2022', '2022/2023'],
                                  key='academic_year')
 
-absences_2122 = decrypt_data('data/21_22/absences/absences_2122.csv')
-absecnes_2223 = decrypt_data('data/22_23/absences/absences_2223.csv')
-
-absences_data = absences_2122 if academic_year == '2021/2022' else absecnes_2223
+df_loaded = load_data_absences(academic_year)
+absences_data = preprocess(df_loaded)
 
 st.markdown('# Absences: all classes')
 
@@ -56,14 +54,6 @@ if (len(filter_abs_years) == 0 or len(filter_abs_terms) == 0
     st.error('Choose at least one parameter in each filter')
     st.stop()
 
-absences_data['Attendance Date'] = pd.to_datetime(
-    absences_data['Attendance Date'], infer_datetime_format=True)
-absences_data['Month'] = absences_data['Attendance Date'].to_numpy().astype(
-    'datetime64[M]')
-absences_data['Week'] = absences_data['Attendance Date'].to_numpy().astype(
-    'datetime64[W]')
-absences_data['abs_count'] = 1
-
 
 def get_filtered_absesence_data(df, years, status, terms):
     return df[(df['Year'].isin(years))
@@ -95,24 +85,26 @@ with tab_absence_count:
     st.altair_chart(all_absences_chart, use_container_width=True)
 
 with tab_absences_over_time:
-    weekly_count_chart = plot_weekly_absences_count(
-        filtered_absence_data, "Average number of absences by week",
-        academic_year)
-    monthly_count_chart = plot_monthly_absences_count(
-        filtered_absence_data, "Average number of absences by month",
-        academic_year)
-    daily_count_chart = plot_daily_absences_count(
-        filtered_absence_data, "Average number of absences by day of week")
+    sea_month_data = seaborn_barchart_resampe_data(filtered_absence_data,
+                                                   'Month', 'abs_count')
 
-    filter_view = st.selectbox(label='Time view',
-                               options=['Monthly', 'Weekly', 'Daily'])
+    sea_month_chart = seaborn_barchart_create(sea_month_data, 'Month', 'avg', [
+        'September', 'October', 'November', 'December', 'January', 'February',
+        'March', 'April', 'May'
+    ])
+    st.pyplot(sea_month_chart.figure)
 
-    def select_time_chart(timeviewinput):
-        if timeviewinput == 'Monthly':
-            st.altair_chart(monthly_count_chart, use_container_width=True)
-        elif timeviewinput == 'Weekly':
-            st.altair_chart(weekly_count_chart, use_container_width=True)
-        else:
-            st.altair_chart(daily_count_chart, use_container_width=True)
+    sea_week_data = seaborn_barchart_resampe_data(filtered_absence_data,
+                                                  'Week', 'abs_count')
+    sea_week_chart = seaborn_barchart_create(sea_week_data,
+                                             'Week',
+                                             'avg',
+                                             rotated_labels=True)
+    st.pyplot(sea_week_chart.figure)
 
-    select_time_chart(filter_view)
+    sea_day_data = seaborn_barchart_resampe_data(filtered_absence_data,
+                                                 'Day of Week', 'abs_count')
+    sea_day_chart = seaborn_barchart_create(
+        sea_day_data, 'Day of Week', 'avg',
+        ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'])
+    st.pyplot(sea_day_chart.figure)
